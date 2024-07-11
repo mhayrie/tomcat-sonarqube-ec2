@@ -1,1 +1,62 @@
-name
+name: Building, scanning, and deploying webapp to Tomcat that is hosted on EC2 
+
+on:
+    push:
+        branches:
+            - main
+
+jobs: 
+    build_and_upload_artifact:
+        runs-on: ubuntu-latest
+        steps:
+            - name: clone repositories into github runner 
+              uses: actions/checkout@3
+
+            - name: install and setup maven and java within github runner
+              uses: actions/setup-java@v3
+              with: 
+                distribution: "adopt"
+                java-version: "11"
+
+            -name: build app with apache maven 
+              run: mvn clean package
+
+            -name: upload maven artifact into github packages
+             uses: actions/upload-artifacts@v3
+             with:
+              name: webapp
+              path: target/*.war
+
+    deply_artifact:
+        runs-on: ubuntu-latest
+        needs: build_and_upload_artifact
+        steps:
+            - name: clone repositories into runner
+              uses: actions/checkout@v3
+
+            - name: install and setup maven and java within github runner
+              uses: actions/setup-java@v3
+              with: 
+                distribution: "adopt"
+                java-version: "11"
+
+            - name: download the artifact we uploaded into github package
+              uses: actions/download-artifact@v3
+              with:
+                name: webapp
+                path: ~/
+
+            - name: run sonarqube scan against code
+              run: |
+                mvn sonar:sonar \
+                -Dsonar.projectKey=scan-code \
+                -Dsonar.host.url=http://3.83.233.7:9000 \
+                -Dsonar.login=d195a8dda4ef664bdb7cc07b012221405ebf0d00
+
+            - name: push into tomcat server (EC2 Instance)
+              run: |
+                echo "${{secrets.NEW_KEY_PAIR}}" > ~/key_pair.pem
+                chmod 400 ~/key_pair.pem
+                sudo scp -i ~/key_pair.pem -o strictHostKeyChecking=no ~/*.war ec2-user@54.167.31.38:/opt/tomcat9/webapps
+
+
