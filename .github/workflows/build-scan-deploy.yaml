@@ -9,10 +9,10 @@ jobs:
     build_and_upload_artifact:
         runs-on: ubuntu-latest
         steps:
-            - name: clone repository into GitHub Runner 
-              uses: actions/checkout@3
+            - name: clone repository into GitHub runner 
+              uses: actions/checkout@v3
 
-            - name: install and setup maven and java within GitHub Runner
+            - name: install and setup maven and java within GitHub runner
               uses: actions/setup-java@v3
               with: 
                 distribution: "adopt"
@@ -34,7 +34,7 @@ jobs:
             - name: clone repositories into runner
               uses: actions/checkout@v3
 
-            - name: install and setup maven and java within GitHub Runner
+            - name: install and setup maven and java within GitHub runner
               uses: actions/setup-java@v3
               with: 
                 distribution: "adopt"
