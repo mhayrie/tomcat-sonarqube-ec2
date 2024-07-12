@@ -18,14 +18,14 @@ jobs:
                 distribution: "adopt"
                 java-version: "11"
 
-            -name: build app with Apache Maven 
+            - name: build app with Apache Maven 
               run: mvn clean package
 
-            -name: upload maven artifact into GitHub Packages
-             uses: actions/upload-artifacts@v3
-             with:
-              name: webapp
-              path: target/*.war
+            - name: upload maven artifact into GitHub Packages
+              uses: actions/upload-artifacts@v3
+              with:
+               name: webapp
+               path: target/*.war
 
     deply_artifact:
         runs-on: ubuntu-latest
