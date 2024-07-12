@@ -27,7 +27,7 @@ jobs:
                name: webapp
                path: target/*.war
 
-    deply_artifact:
+    deploy_artifact:
         runs-on: ubuntu-latest
         needs: build_and_upload_artifact
         steps:
